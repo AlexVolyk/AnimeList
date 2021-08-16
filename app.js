@@ -4,7 +4,9 @@ const app = Express();
 
 const dbConnetcion = require('./db');
 const controllers = require('./controllers');
-// const middleware = require('./middleware');
+const middleware = require('./middleware');
+
+app.use(middleware.CORS)
 
 app.use(Express.json())
 
@@ -20,9 +22,10 @@ dbConnetcion.authenticate()
         console.log(`[SERVER]: crashed ${err}`)
     })
 
-
+    
 app.use('/user', controllers.userController);
 app.use('/admin', controllers.adminController);
+app.use('/anime', controllers.animeController);
 
 
 

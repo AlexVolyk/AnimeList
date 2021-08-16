@@ -5,17 +5,16 @@ const bcrypt = require('bcryptjs');
 
 // ? REGISTE USER
 router.post('/register', async (req, res) => {
-    let {firstName,
-        lastName,
+    let {username,
         email,
         password
     } = req.body.user;
 
     try {
         let User = await UserModel.create({
-            firstName,
-            lastName,
+            username,
             email,
+            isAdmin: false,
             password: bcrypt.hashSync(password, 7)
         });
 
@@ -24,8 +23,7 @@ router.post('/register', async (req, res) => {
         res.status(201).json({
             message: "User successfully registered",
             user: User,
-            sessionToken: token,
-            status: "user",
+            userSessionToken: token,
         })
     } catch (err) {
         res.status(500).json({
@@ -55,8 +53,8 @@ router.post('/login', async (req, res) => {
                 res.status(200).json({
                     message: "User successfully logged in",
                     user: loginUser,
-                    sessionToken: token,
-                    status: "user",
+                    userSessionToken: token,
+                    // status: "user",
                 })
             } else {
                 res.status(401).json({

@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const {UserModel} = require('../models');
+const {AdminModel} = require('../models');
 
 const validateJWT = async (req, res, next) => {
     if (req.method == "OPTIONS") {
@@ -7,16 +7,16 @@ const validateJWT = async (req, res, next) => {
 
     } else if (
         req.headers.authorization &&
-        req.headers.authorization.includes(process.env.SECRET_USER_KEY)
+        req.headers.authorization.includes(process.env.SECRET_ADMIN_KEY)
         ) {
 
             const {authorization} = req.headers;
 
             console.log(authorization, 'authorization-------------------------------');
 
-            const payload = authorization ? jwt.verify(authorization.includes(process.env.SECRET_USER_KEY)
+            const payload = authorization ? jwt.verify(authorization.includes(process.env.SECRET_ADMIN_KEY)
             ? authorization.split(' ')[1]
-            : authorization, process.env.USER_JWT_SECRET
+            : authorization, process.env.ADMIN_JWT_SECRET
             )
             : undefined;
 
@@ -24,15 +24,15 @@ const validateJWT = async (req, res, next) => {
             
             if (payload) {
                 
-                let foundUser = await UserModel.findOne({
+                let foundAdmin = await AdminModel.findOne({
                     where: {id: payload.id}
                 })
 
-                console.log(foundUser, 'foundUser++++++++++++++++++++++++++++++++++++++')
+                console.log(foundAdmin, 'foundAdmin++++++++++++++++++++++++++++++++++++++')
 
 
-                if (foundUser) {
-                    req.user = foundUser;
+                if (foundAdmin) {
+                    req.admin = foundAdmin;
                     next();
 
                 } else {

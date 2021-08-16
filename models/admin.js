@@ -2,7 +2,7 @@ const DataTypes = require('sequelize');
 const db = require('../db')
 
 const Admin = db.define('admin', {
-    adminName: {
+    username: {
         type: DataTypes.STRING,
         allowNull: false,
         unique: true

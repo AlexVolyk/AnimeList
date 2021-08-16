@@ -4,9 +4,17 @@ const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 
 
+
+router.get('/animeAll', async (req, res) => {
+    let data1 = require('../data1.json');
+    res.status(200).json({
+        json: data1[6].episodes
+    })
+});
+
 // ? REGISTER ADMIN
 router.post('/register', async (req, res) => {
-    let {adminName,
+    let {username,
         email,
         password,
         isAdmin,
@@ -16,7 +24,7 @@ router.post('/register', async (req, res) => {
     try {
         let Admin = await AdminModel.create({
             isAdmin: true,
-            adminName,
+            username,
             email,
             password: bcrypt.hashSync(password, 13),
         });
@@ -26,7 +34,7 @@ router.post('/register', async (req, res) => {
         res.status(201).json({
             message: "Admin successfully registered",
             user: Admin,
-            sessionToken: token,
+            adminSessionToken: token,
             // status: "admin"
         })
 
@@ -38,11 +46,11 @@ router.post('/register', async (req, res) => {
 });
 
 
-
+// ! think here about universal endpoint what for user and admin login
 
 // ? LOGIN ADMIN
 router.post('/login', async (req, res) => {
-    let {adminName,
+    let {username,
         email,
         password,
     } = req.body.admin
@@ -69,7 +77,7 @@ router.post('/login', async (req, res) => {
                 res.status(200).json({
                     message: "Admin successfully logged in",
                     admin: adminLogin,
-                    sessionToken: token,
+                    adminSessionToken: token,
                     // status: "admin"
                 })
             } else {
