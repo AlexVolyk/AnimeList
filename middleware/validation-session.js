@@ -12,7 +12,7 @@ const validateJWT = async (req, res, next) => {
 
             const {authorization} = req.headers;
 
-            console.log(authorization, 'authorization-------------------------------');
+            // console.log(authorization, 'authorization-------------------------------');
 
             const payload = authorization ? jwt.verify(authorization.includes(process.env.SECRET_ADMIN_KEY)
             ? authorization.split(' ')[1]
@@ -20,7 +20,7 @@ const validateJWT = async (req, res, next) => {
             )
             : undefined;
 
-            console.log(payload, 'payload===========================================')
+            // console.log(payload, 'payload===========================================')
             
             if (payload) {
                 
@@ -28,7 +28,7 @@ const validateJWT = async (req, res, next) => {
                     where: {id: payload.id}
                 })
 
-                console.log(foundAdmin, 'foundAdmin++++++++++++++++++++++++++++++++++++++')
+                // console.log(foundAdmin, 'foundAdmin++++++++++++++++++++++++++++++++++++++')
 
 
                 if (foundAdmin) {

@@ -1,4 +1,5 @@
 require('dotenv').config();
+const fileUpload = require('express-fileupload');
 const Express = require('express');
 const app = Express();
 
@@ -7,7 +8,7 @@ const controllers = require('./controllers');
 const middleware = require('./middleware');
 
 app.use(middleware.CORS)
-
+app.use(fileUpload())
 app.use(Express.json())
 
 
@@ -26,6 +27,7 @@ dbConnetcion.authenticate()
 app.use('/user', controllers.userController);
 app.use('/admin', controllers.adminController);
 app.use('/anime', controllers.animeController);
+app.use('/images', controllers.imageController);
 
 
 
