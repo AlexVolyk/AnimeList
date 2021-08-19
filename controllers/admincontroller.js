@@ -1,7 +1,8 @@
 const router = require('express').Router(); 
-const {AdminModel} = require('../models');
+const {AdminModel, UserModel} = require('../models');
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
+const {admValidateSession} = require('../middleware');
 
 
 
@@ -32,7 +33,7 @@ router.post('/register', async (req, res) => {
         let token = jwt.sign({id: Admin.id}, process.env.ADMIN_JWT_SECRET, {expiresIn: 60 * 60 * 24});
 
         res.status(201).json({
-            message: "Admin successfully registered",
+            message: "Admin successfully deleted",
             user: Admin,
             adminSessionToken: token,
             // status: "admin"
@@ -70,7 +71,7 @@ router.post('/login', async (req, res) => {
             // not work neeed  logic with bcrypt adminName
 
             if (passwordHashComprasion) {
-                //            if (passwordHashComprasion && adminNameHashComprasion) {
+                // if (passwordHashComprasion && adminNameHashComprasion) {
 
 
                 let token = jwt.sign({id: adminLogin.id}, process.env.ADMIN_JWT_SECRET, {expiresIn: 60 * 60 * 24})
@@ -101,5 +102,62 @@ router.post('/login', async (req, res) => {
         })
     }
 });
+
+// ! DELETE ADMIN
+router.delete('/delete/user/:id', admValidateSession, async(req, res) => {
+    // const owner_id = req.admin.id;
+    const adminId = req.params.id;
+    // const animeName = req
+    console.log("SMT");
+    try {
+        const query = {
+            where: {
+                id: adminId,
+                // owner_id: owner_id
+            }
+        }
+        console.log(query)
+        const bye = await AdminModel.findOne(query)
+        await UserModel.destroy(query);
+        res.status(200).json({
+            message: "Admin successfully deleted",
+            admin_deleted: bye,
+            deleted: query
+        });
+    } catch (err) {
+        res.status(500).json({error: err})
+    }
+    // console.log(animeId)
+    // console.log(animeName)
+})
+
+
+// ! DELETE USER CAN ADMIN(any of the admins)
+router.delete('/delete/user/by/admin/:id', admValidateSession, async(req, res) => {
+    const adminId = req.admin.id;
+    const animeId = req.params.id;
+    // const animeName = req
+    console.log("SMT");
+    try {
+        const query = {
+            where: {
+                id: animeId,
+                // owner_id: owner_id
+            }
+        }
+        console.log(query)
+        const bye = await UserModel.findOne(query)
+        await UserModel.destroy(query);
+        res.status(200).json({
+            message: `User successfully deleted by admin ${adminId}`,
+            user_deleted: bye,
+            deleted: query
+        });
+    } catch (err) {
+        res.status(500).json({error: err})
+    }
+    // console.log(animeId)
+    // console.log(animeName)
+})
 
 module.exports = router;

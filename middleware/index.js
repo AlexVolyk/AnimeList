@@ -1,4 +1,5 @@
 module.exports = {
     CORS: require('./headers.js'),
-    validationSession: require('./validation-session.js')
+    admValidateSession: require('./ADMvalidation-session.js'),
+    useValidateSession: require('./USEvalidation-session.js')
 }

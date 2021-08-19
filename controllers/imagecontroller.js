@@ -11,7 +11,7 @@ router.get('/top', async (req, res) => {
     try {
         console.log("-----------------------")
 
-        let image = await require(`../images/3.jpg`);
+        let image = await require(`../images/dog.jpg`);
         console.log(image, '======================================')
         res.status(200).json({
             json: image

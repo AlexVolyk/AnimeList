@@ -1,19 +1,20 @@
+const { STRING } = require('sequelize');
 const DataTypes = require('sequelize');
 const db = require('../db')
 
 const Anime = db.define('anime', {
     title_name: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
         // unique: true // think
     },
     title_english: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
         // unique: true // think
     },
     description: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
     },
     episodes: {
@@ -26,6 +27,7 @@ const Anime = db.define('anime', {
     },
     genres: {
         type: DataTypes.STRING,
+        // type: DataTypes.ARRAY[STRING],
         allowNull: false,
     },
     duration: {

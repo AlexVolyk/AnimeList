@@ -3,7 +3,8 @@ const download = require('image-downloader')
 // const fileUpload = require('express-fileupload')
 const {AnimeModel} = require('../models');
 
-let validateJWT = require('../middleware/validation-session');
+
+const {admValidateSession} = require('../middleware');
 
 // const IMG = {
 //     url: 'https://cdn.myanimelist.net/images/anime/1548/116226.jpg',
@@ -15,8 +16,36 @@ let validateJWT = require('../middleware/validation-session');
 //   })
 //   .catch((err) => console.error(err))
 
+// const file = require('../data1.json')
+router.get('/json/:id', async(req, res) => {
+    // const owner_id = req.admin.id;
+    const file = await require('../data1.json')
+    console.log(file)
+    const animeGenre = req.params.id;
+    // const animeName = req
+    try {
+        const query = {
+            where: { 
+                mal_id: animeGenre,
+                // owner_id: owner_id
+            }
+        }
+        console.log(query)
+        let animesFind = await file.findOne(query);
+        res.status(200).json({
+            message: "Anime successfully find",
+            find: animesFind,
+            query: query
+        });
+    } catch (err) {
+        res.status(500).json({error: err.message})
+    }
+    // console.log(animeId)
+    // console.log(animeName)
+});
+
 //! CREATE
-router.post('/create', validateJWT, async (req, res) => {
+router.post('/create', admValidateSession, async (req, res) => {
     let {
     title_name,
     title_english,
@@ -76,9 +105,35 @@ router.get('/all', async (req, res) => {
     }
 });
 
+//! GET BY ONE GENRE
+router.get('/:genres', async(req, res) => {
+    // const owner_id = req.admin.id;
+    const animeGenre = req.params.genres;
+    // const animeName = req
+    try {
+        const query = {
+            where: {
+                genres: animeGenre,
+                // owner_id: owner_id
+            }
+        }
+        console.log(query)
+        let animesFind = await AnimeModel.findAll(query);
+        res.status(200).json({
+            message: "Anime successfully find",
+            find: animesFind,
+            query: query
+        });
+    } catch (err) {
+        res.status(500).json({error: err})
+    }
+    // console.log(animeId)
+    // console.log(animeName)
+});
+
 
 //! DELETE CAN ONLY ADMIN(any of the admins)
-router.delete('/delete/:id', validateJWT, async(req, res) => {
+router.delete('/delete/:id', admValidateSession, async(req, res) => {
     // const owner_id = req.admin.id;
     const animeId = req.params.id;
     // const animeName = req
@@ -93,14 +148,16 @@ router.delete('/delete/:id', validateJWT, async(req, res) => {
         await AnimeModel.destroy(query);
         res.status(200).json({
             deleted: query,
-            message: "Character successfully retired"
+            message: "Anime successfully deleted"
         });
     } catch (err) {
         res.status(500).json({error: err})
     }
     // console.log(animeId)
     // console.log(animeName)
-})
+});
+
+
 
 
 module.exports = router;
