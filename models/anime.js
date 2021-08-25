@@ -42,7 +42,11 @@ const Anime = db.define('anime', {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    href: {
+    youTube: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    youTubeImg: {
         type: DataTypes.STRING,
         allowNull: false,
     },
@@ -64,4 +68,5 @@ module.exports = Anime;
         // console.log(duration); // ! duration
         // console.log(rating); // ! rating
         // console.log(img); // ! img 
-        // console.log(href); // ! video href
+        // console.log(youTube); // ! video href
+        // console.log(youTubeImg); // ! video img

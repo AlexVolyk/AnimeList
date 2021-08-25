@@ -16,7 +16,7 @@ router.post('/register', async (req, res) => {
         let User = await UserModel.create({
             username,
             email,
-            isAdmin: false,
+            isAdmin: false, //!
             password: bcrypt.hashSync(password, 7)
         });
 
