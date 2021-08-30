@@ -103,18 +103,18 @@ router.put('/edit/user/:id', useValidateSession, async (req, res) => {
     const updateUser = {
         username,
         email,
-        password
+        password: bcrypt.hashSync(password, 7)
     };
 
     try {
-        const updated = await User.update(updateUser, query);
-        res.status(200).json({
+        const updated = await UserModel.update(updateUser, query);
+        res.status(201).json({
             message: 'User updated successfully',
             update: updateUser,
             updateUser: updated
         });
     } catch (err) {
-        res.status(500).json({error: err});
+        res.status(500).json({error: err.message});
     }
 });
 
@@ -129,6 +129,7 @@ router.delete('/delete/user/:id', useValidateSession, async(req, res) => {
             }
         }
         console.log(query)
+
         const bye = await UserModel.findOne(query)
         await UserModel.destroy(query);
         res.status(200).json({
