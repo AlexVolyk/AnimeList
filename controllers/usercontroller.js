@@ -3,7 +3,17 @@ const {UserModel} = require('../models');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const {useValidateSession} = require('../middleware');
+const {admValidateSession} = require('../middleware');
 
+//? GET USERS
+router.get('/allUsers',admValidateSession, async (req, res) => {
+    try {
+        const allUsers = await UserModel.findAll();
+        res.status(200).json(allUsers)
+    } catch (err) {
+        res.status(500).json({error: err});
+    }
+});
 
 // ? REGISTE USER
 router.post('/register', async (req, res) => {
@@ -16,7 +26,7 @@ router.post('/register', async (req, res) => {
         let User = await UserModel.create({
             username,
             email,
-            isAdmin: false, //!
+            isAdmin: true, //!
             password: bcrypt.hashSync(password, 7)
         });
 

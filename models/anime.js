@@ -42,11 +42,11 @@ const Anime = db.define('anime', {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    youTube: {
+    youTubeImg: {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    youTubeImg: {
+    youTubeVideo: {
         type: DataTypes.STRING,
         allowNull: false,
     },
