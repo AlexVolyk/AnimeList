@@ -1,52 +1,12 @@
 const router = require('express').Router();
-const download = require('image-downloader')
-// const fileUpload = require('express-fileupload')
 const {AnimeModel} = require('../models');
-// const multer = require('multer');
-
 const cheerio = require('cheerio');
 const request = require('request');
-
-
 const {admValidateSession} = require('../middleware');
 
-// const IMG = {
-//     url: 'https://cdn.myanimelist.net/images/anime/1548/116226.jpg',
-//     dest: './images/image.jpg'                // will be saved to /path/to/dest/image.jpg
-//   }
-// download.image(IMG)
-//   .then(({ filename }) => {
-//     console.log('Saved to', filename)  // saved to /path/to/dest/image.jpg
-//   })
-//   .catch((err) => console.error(err))
-
-// const file = require('../data1.json')
-// router.get('/json/:id', async(req, res) => {
-//     // const owner_id = req.admin.id;
-//     const file = await require('../data1.json')
-//     console.log(file)
-//     const animeGenre = req.params.id;
-//     // const animeName = req
-//     try {
-//         const query = {
-//             where: { 
-//                 mal_id: animeGenre,
-//                 // owner_id: owner_id
-//             }
-//         }
-//         console.log(query)
-//         let animesFind = await file.findOne(query);
-//         res.status(200).json({
-//             message: "Anime successfully find",
-//             find: animesFind,
-//             query: query
-//         });
-//     } catch (err) {
-//         res.status(500).json({error: err.message})
-//     }
-//     // console.log(animeId)
-//     // console.log(animeName)
-// });
+// const download = require('image-downloader')
+// const fileUpload = require('express-fileupload')
+// const multer = require('multer');
 
 
 //! PARSER
@@ -87,7 +47,7 @@ router.post('/pars', admValidateSession,  async(req, res) => {
             .replace('[Written by MAL Rewrite]', '')
             .trim();
 
-            const type = await $("td.borderClass > div > div:nth-child(13)")
+            const animeType = await $("td.borderClass > div > div:nth-child(13)")
             .text()
             .replace('Type:', '')
             .trim();
@@ -102,10 +62,9 @@ router.post('/pars', admValidateSession,  async(req, res) => {
             .replace('Studios:', '')
             .trim();
 
-            const genres = await $("td.borderClass > div > div:nth-child(23)")
+            const genres = await $("td.borderClass > div > div:nth-child(23) span")
             .text()
             .replace('Genres:', '')
-            // .replace('Genres:', '')
             .trim();
 
             const duration = await  $("td.borderClass > div > div:nth-child(24)")
@@ -125,20 +84,11 @@ router.post('/pars', admValidateSession,  async(req, res) => {
             .find("a")
             .attr("href")
 
-            const youTubeImg = await $(".video-promotion")
-            .find("a")
-            .attr("style")
-            .replace("background-image:url", '')
-            .replace("(", '')
-            .replace(")", '')
-            .replace("'", '')
-            .replace("'", '')
-
             obj = {
                 "description": description,
                 "title_name": title_name,
                 "title_english": title_english,
-                "type": type,
+                "animeType": animeType,
                 "episodes": episodes,
                 "studios": studios,
                 "genres": genres,
@@ -146,7 +96,6 @@ router.post('/pars', admValidateSession,  async(req, res) => {
                 "rating": rating,
                 "img": img,
                 "youTubeVideo": youTubeVideo,
-                "youTubeImg": youTubeImg
             }
             result = await obj
                 try {
@@ -159,7 +108,6 @@ router.post('/pars', admValidateSession,  async(req, res) => {
     }
         }
     
-
         requ(URL)
     
 })
@@ -172,52 +120,26 @@ router.post('/create', admValidateSession, async (req, res) => {
     description,
     episodes,
     studios,
-    genres, // !
+    genres,
     duration,
     rating,
-    img, //!
-    youTubeImg,
+    img,
+    animeType,
     youTubeVideo,
 } = req.body.anime
 let {id} = req.admin
-// var storage = multer.diskStorage({
-//     destination: function (req, file, cb) {
-//         cb(null, '../images')
-//     },
-//     filename: function (req, file, cb) {
-//       cb(null, file.originalname) // ID of Anime
-//     }
-// })
-// var upload = multer({ storage: storage })
-// console.log(upload, 'HERE+++++++++++++++++++++++++')
 
-// app.use(express.static(__dirname + '/public'));
-// app.use('/uploads', express.static('uploads'));
-
-// app.post('/profile-upload-single', upload.single('profile-file'), function 
-// const IMG = img.replace('https://cdn.myanimelist.net', 'http://localhost:3000')
-// const {id} = req.admin
-//     const IMG = {
-//         url: img,
-//         dest: `./images/3.jpg`
-//     }
-//     download.image(IMG)
-//     .then(({ filename }) => {
-//         console.log('Saved to', filename)  // saved to /path/to/dest/image.jpg\
-//     })
-//     .catch((err) => console.error(err))
 let animeEntry = {
     title_name,
     title_english,
     description,
     episodes,
     studios,
-    genres, // !
+    genres,
     duration,
     rating,
     img,
-    // img: `http://localhost:3000/images/anime/2.jpg`, // !
-    youTubeImg,
+    animeType,
     youTubeVideo,
     owner_id: id
 }
@@ -248,14 +170,11 @@ router.get('/all', async (req, res) => {
 
 //! GET BY ONE GENRE
 router.get('/:genres', async(req, res) => {
-    // const owner_id = req.admin.id;
     const animeGenre = req.params.genres;
-    // const animeName = req
     try {
         const query = {
             where: {
                 genres: animeGenre,
-                // owner_id: owner_id
             }
         }
         console.log(query)
@@ -272,14 +191,11 @@ router.get('/:genres', async(req, res) => {
 
 //! GET BY ONE GENRE
 router.get('/find/:title_name', async(req, res) => {
-    // const owner_id = req.admin.id;
     const animeTitle = req.params.title_name;
-    // const animeName = req
     try {
         const query = {
             where: {
                 title_name: animeTitle,
-                // owner_id: owner_id
             }
         }
         console.log(query)
@@ -302,15 +218,14 @@ router.put('/edit/:id', admValidateSession, async (req, res) => {
         description,
         episodes,
         studios,
-        genres, // !
+        genres,
         duration,
         rating,
-        img, //!
-        youTubeImg,
+        img,
+        animeType,
         youTubeVideo,
     } = req.body.anime
     const animeId = req.params.id;
-    // const username = req.user.username;
 
     const query = {
         where: {
@@ -324,11 +239,11 @@ router.put('/edit/:id', admValidateSession, async (req, res) => {
         description,
         episodes,
         studios,
-        genres, // !
+        genres, 
         duration,
         rating,
-        img, //!
-        youTubeImg,
+        img, 
+        animeType,
         youTubeVideo,
     };
 
@@ -346,14 +261,11 @@ router.put('/edit/:id', admValidateSession, async (req, res) => {
 
 //! DELETE CAN ONLY ADMIN(any of the admins)
 router.delete('/delete/:id', admValidateSession, async(req, res) => {
-    // const owner_id = req.admin.id;
     const animeId = req.params.id;
-    // const animeName = req
     try {
         const query = {
             where: {
                 id: animeId,
-                // owner_id: owner_id
             }
         }
         console.log(query)

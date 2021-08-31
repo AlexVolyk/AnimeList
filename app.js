@@ -27,8 +27,6 @@ dbConnetcion.authenticate()
 app.use('/user', controllers.userController);
 app.use('/admin', controllers.adminController);
 app.use('/anime', controllers.animeController);
-app.use('/images', controllers.imageController);
-
 
 
 // app.listen(process.env.PORT, () => {

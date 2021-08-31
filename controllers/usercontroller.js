@@ -19,14 +19,22 @@ router.get('/allUsers',admValidateSession, async (req, res) => {
 router.post('/register', async (req, res) => {
     let {username,
         email,
-        password
+        password,
+        isAdmin
     } = req.body.user;
 
     try {
+        if (!isAdmin) {
+            isAdmin = false
+        } else if (isAdmin === true) {
+            isAdmin = true
+        } else {
+            isAdmin = false
+        }
         let User = await UserModel.create({
             username,
             email,
-            isAdmin: true, //!
+            isAdmin: isAdmin,
             password: bcrypt.hashSync(password, 7)
         });
 
@@ -66,7 +74,6 @@ router.post('/login', async (req, res) => {
                     message: "User successfully logged in",
                     user: loginUser,
                     userSessionToken: token,
-                    // status: "user",
                 })
             } else {
                 res.status(401).json({
@@ -92,7 +99,6 @@ router.put('/edit/user/:id', useValidateSession, async (req, res) => {
         password
     } = req.body.user;
     const userId = req.params.id;
-    // const username = req.user.username;
 
     const query = {
         where: {
@@ -119,9 +125,7 @@ router.put('/edit/user/:id', useValidateSession, async (req, res) => {
 });
 
 router.delete('/delete/user/:id', useValidateSession, async(req, res) => {
-    // const owner_id = req.admin.id;
     const userId = req.params.id;
-    // const animeName = req
     try {
         const query = {
             where: {

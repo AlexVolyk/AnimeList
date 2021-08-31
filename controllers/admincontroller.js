@@ -6,13 +6,6 @@ const {admValidateSession} = require('../middleware');
 
 
 
-router.get('/animeAll', async (req, res) => {
-    let data1 = require('../data1.json');
-    res.status(200).json({
-        json: data1[6].episodes
-    })
-});
-
 // ? REGISTER ADMIN
 router.post('/register', async (req, res) => {
     let {username,
@@ -23,8 +16,15 @@ router.post('/register', async (req, res) => {
 
 
     try {
+        if (!isAdmin) {
+            isAdmin = false
+        } else if (isAdmin === true) {
+            isAdmin = true
+        } else {
+            isAdmin = false
+        }
         let Admin = await AdminModel.create({
-            isAdmin: true,
+            isAdmin: isAdmin,
             username,
             email,
             password: bcrypt.hashSync(password, 13),
@@ -36,7 +36,6 @@ router.post('/register', async (req, res) => {
             message: "Admin successfully deleted",
             user: Admin,
             adminSessionToken: token,
-            // status: "admin"
         })
 
     } catch (err) {
@@ -46,8 +45,6 @@ router.post('/register', async (req, res) => {
     }
 });
 
-
-// ! think here about universal endpoint what for user and admin login
 
 // ? LOGIN ADMIN
 router.post('/login', async (req, res) => {
@@ -67,11 +64,8 @@ router.post('/login', async (req, res) => {
         if (adminLogin){
 
             let passwordHashComprasion = bcrypt.compareSync(password, adminLogin.password)
-            // let adminNameHashComprasion = bcrypt.compareSync(adminName, adminLogin.adminName)
-            // not work neeed  logic with bcrypt adminName
 
             if (passwordHashComprasion) {
-                // if (passwordHashComprasion && adminNameHashComprasion) {
 
 
                 let token = jwt.sign({id: adminLogin.id}, process.env.ADMIN_JWT_SECRET, {expiresIn: 60 * 60 * 24})
@@ -79,7 +73,6 @@ router.post('/login', async (req, res) => {
                     message: "Admin successfully logged in",
                     admin: adminLogin,
                     adminSessionToken: token,
-                    // status: "admin"
                 })
             } else {
                 res.status(401).json({
@@ -95,7 +88,6 @@ router.post('/login', async (req, res) => {
         }
 
 
-
     } catch (err) {
         res.status(500).json({
             message: `Failed to login ${err}`
@@ -105,15 +97,12 @@ router.post('/login', async (req, res) => {
 
 // ! DELETE ADMIN
 router.delete('/delete/user/:id', admValidateSession, async(req, res) => {
-    // const owner_id = req.admin.id;
     const adminId = req.params.id;
-    // const animeName = req
     console.log("SMT");
     try {
         const query = {
             where: {
                 id: adminId,
-                // owner_id: owner_id
             }
         }
         console.log(query)
@@ -127,8 +116,6 @@ router.delete('/delete/user/:id', admValidateSession, async(req, res) => {
     } catch (err) {
         res.status(500).json({error: err})
     }
-    // console.log(animeId)
-    // console.log(animeName)
 })
 
 
@@ -136,13 +123,11 @@ router.delete('/delete/user/:id', admValidateSession, async(req, res) => {
 router.delete('/delete/user/by/admin/:id', admValidateSession, async(req, res) => {
     const adminId = req.admin.id;
     const animeId = req.params.id;
-    // const animeName = req
     console.log("SMT");
     try {
         const query = {
             where: {
                 id: animeId,
-                // owner_id: owner_id
             }
         }
         console.log(query)
@@ -156,8 +141,6 @@ router.delete('/delete/user/by/admin/:id', admValidateSession, async(req, res) =
     } catch (err) {
         res.status(500).json({error: err})
     }
-    // console.log(animeId)
-    // console.log(animeName)
 })
 
 module.exports = router;
