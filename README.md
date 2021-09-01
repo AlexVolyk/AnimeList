@@ -51,41 +51,41 @@ Folder models includes 4 files (index.js is router)
 ## Endpoints
 
 ## user/ 
-* user/allUsers -->   list of user (can get only admin)
+* user/allUsers --->   list of user (can get only admin)
 
-* user/register --> register user
+* user/register ---> register user
 
-* user/login --> login user
+* user/login ---> login user
 
-* user/edit/user/:id --> user can update his info (for updating we need user id)
+* user/edit/user/:id ---> user can update his info (for updating we need user id)
 
-* user/delete/user/:id --> user can update his info (for deleting we need user id)
+* user/delete/user/:id ---> user can update his info (for deleting we need user id)
 
 ---
 ## admin/
 
-* admin/register --> register admin
+* admin/register ---> register admin
 
 * admin/login ---> login admin
 
-* admin/delete/user/by/admin/:id --> admin can delete user by id
+* admin/delete/user/by/admin/:id ---> admin can delete user by id
 
-* admin/delete/admin/:id --> admin can be deleted by id
+* admin/delete/admin/:id ---> admin can be deleted by id
 
 ---
 ## anime/
 
-* anime/pars --> parsing site(can only admin)
+* anime/pars ---> parsing site(can only admin)
 
-* anime/create --> create anime(can only admin)
+* anime/create ---> create anime(can only admin)
 
-* anime/all --> get all animes
+* anime/all ---> get all animes
 
-* anime/:genres --> get anime by genre(can only admin){but don't remember is this endpoint using}
+* anime/:genres ---> get anime by genre(can only admin){but don't remember is this endpoint using}
 
-* anime/find/:title_name --> find name of title
+* anime/find/:title_name ---> find name of title
 
-* anime/edit/:id --> edit anime(can only admin)
+* anime/edit/:id ---> edit anime(can only admin)
 
-* anime/delete/:id --> edit anime(can only admin)
+* anime/delete/:id ---> delete anime(can only admin)
 ---
