@@ -96,7 +96,7 @@ router.post('/login', async (req, res) => {
 });
 
 // ! DELETE ADMIN
-router.delete('/delete/user/:id', admValidateSession, async(req, res) => {
+router.delete('/delete/admin/:id', admValidateSession, async(req, res) => {
     const adminId = req.params.id;
     console.log("SMT");
     try {

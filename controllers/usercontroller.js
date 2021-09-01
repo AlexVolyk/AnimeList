@@ -6,7 +6,7 @@ const {useValidateSession} = require('../middleware');
 const {admValidateSession} = require('../middleware');
 
 //? GET USERS
-router.get('/allUsers',admValidateSession, async (req, res) => {
+router.get('/allUsers', admValidateSession, async (req, res) => {
     try {
         const allUsers = await UserModel.findAll();
         res.status(200).json(allUsers)
