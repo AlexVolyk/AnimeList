@@ -89,3 +89,17 @@ Folder models includes 4 files (index.js is router)
 
 * anime/delete/:id ---> delete anime(can only admin)
 ---
+## Access to admin button
+![User access to admin](./img/user-access-to-admin.png)
+In Postmen you will must to write that line of JSON (this line will allow you to see | Login Admin button |)
+
+---
+## Admin Sign Up
+![SignUp Admin](./img/SignUp-Admin.png)
+In Postmen you will must to write that line of JSON (this line will allow you to see | Admin Panel |)
+
+---
+## Delete Admin
+![Delete Admin](./img/delete-admin.png)
+In Postmen you will must to put in Authorization line "I_AM_ADMIN" and admin token (yellow text)
+
