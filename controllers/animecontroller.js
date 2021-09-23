@@ -1,14 +1,24 @@
 const router = require('express').Router();
 const {AnimeModel} = require('../models');
+const {admValidateSession} = require('../middleware');
 const cheerio = require('cheerio');
 const request = require('request');
-const {admValidateSession} = require('../middleware');
 
 // const download = require('image-downloader')
 // const fileUpload = require('express-fileupload')
 // const multer = require('multer');
 
-
+// router.get('/foto', async(req, res) => {
+//     // let photo = __dirname+'/server/pictures/62309.jpg'
+//     // console.log(photo,"====================")
+//     let path = __dirname
+//     path = path.replace('\\controllers', '')
+//     let photo = path + '\\pictures\\62309.jpg'
+//     photo = photo.replace(/\\/g,'/')
+//     console.log(path)
+//     console.log(photo)
+//     res.send({photo: photo})
+// })
 //! PARSER
 router.post('/pars', admValidateSession,  async(req, res) => {
     let{
@@ -16,22 +26,71 @@ router.post('/pars', admValidateSession,  async(req, res) => {
     } = req.body.pars
     
     const URL = parsUrl;
-    
+    let pageHTML;
     async function requ(URL) {
         request(URL, async(err, res, html) => {
             if (!err && res.statusCode == 200) {
+                pageHTML = await html
                 const $ = await cheerio.load(html);
                 // console.log($)
                 setTimeout(() => {
-                    che($)
+                    che($, pageHTML)
                 }, 4000);
         } else {
             console.log("Not Found")
         }
     })
 }
-    async function che($) {
+    async function che($, pageHTML) {
         // console.log(che)
+        // console.log(pageHTML)
+
+            let animeType = pageHTML.match(/Type:<\D+><\/div>$/gm)
+            animeType = JSON.stringify(animeType)
+            animeType = animeType.replace(/Type:<\D+>\\n/gm, '')
+            animeType = animeType.replace('  ', '')
+            animeType = animeType.replace(/<a href=\\?"\D+">/gm, '')
+            animeType = animeType.replace(/<\/a><\/div>/gm, '')
+            animeType = animeType.replace(/\"/gm, '')
+            animeType = animeType.replace(/\[/, '')
+            animeType = animeType.replace(/\]/, '')
+
+            // console.log(animeType, 'animeType')
+
+            let episodes = pageHTML.match(/\bEpisodes:<\D+>\s+[\d]+\b/gm)
+            episodes = JSON.stringify(episodes)
+            episodes = episodes.replace(/Episodes:<\D+>\\n\s+/gm, '')
+            episodes = episodes.replace(/\"/gm, '')
+            episodes = episodes.replace(/\[/, '')
+            episodes = episodes.replace(/\]/, '')
+
+            // console.log(episodes, 'episodes')
+            
+            let duration = pageHTML.match(/\bDuration:<\D+>\s+[\d]+[\D]+ep\b/gm)
+            duration = JSON.stringify(duration)
+            duration = duration.replace(/Duration:<\D+>\\n/gm, '')
+            duration = duration.replace('  ', '')
+            duration = duration.replace(/\"/gm, '')
+            duration = duration.replace(/\[/, '')
+            duration = duration.replace(/\]/, '')
+
+            // console.log(duration, 'duration')
+
+
+            let rating = pageHTML.match(/Rating:<\D+>[\D\d\D]+?<\/div>/gm)
+            rating = JSON.stringify(rating)
+            rating = rating.replace(/Rating:<\D+>/gm, '')
+            rating = rating.replace(/\\n/gm, '')
+            rating = rating.replace(/<\D+>/gm, '')
+            rating = rating.replace('&amp;', '&')
+            rating = rating.replace(/\"/gm, '')
+            rating = rating.replace('[', '') //!
+            rating = rating.replace(']', '') //!
+            rating = rating.replace(/\s\s/g, '')
+
+            // console.log(rating, 'rating')
+
+
             const title_name = await $('.edit-info')
             .find('.title-name')
             .text()
@@ -47,15 +106,15 @@ router.post('/pars', admValidateSession,  async(req, res) => {
             .replace('[Written by MAL Rewrite]', '')
             .trim();
 
-            const animeType = await $("td.borderClass > div > div:nth-child(13)")
-            .text()
-            .replace('Type:', '')
-            .trim();
+            // const animeType = await $("td.borderClass > div > div:nth-child(13)")
+            // .text()
+            // .replace('Type:', '')
+            // .trim();
 
-            const episodes =await  $("td.borderClass > div > div:nth-child(14)")
-            .text()
-            .replace('Episodes:', '')
-            .trim();
+            // const episodes = await  $("td.borderClass > div > div:nth-child(14)")
+            // .text()
+            // .replace('Episodes:', '')
+            // .trim();
 
             const studios = await $("td.borderClass > div > div:nth-child(21)")
             .text()
@@ -67,15 +126,15 @@ router.post('/pars', admValidateSession,  async(req, res) => {
             .replace('Genres:', '')
             .trim();
 
-            const duration = await  $("td.borderClass > div > div:nth-child(24)")
-            .text()
-            .replace('Duration:', '')
-            .trim();
+            // const duration = await  $("td.borderClass > div > div:nth-child(24)")
+            // .text()
+            // .replace('Duration:', '')
+            // .trim();
 
-            const rating =  await $("td.borderClass > div > div:nth-child(25)")
-            .text()
-            .replace('Rating:', '')
-            .trim();
+            // const rating =  await $("td.borderClass > div > div:nth-child(25)")
+            // .text()
+            // .replace('Rating:', '')
+            // .trim();
 
             const img = await $("td.borderClass > div > div:nth-child(1) > a > img")
             .attr("data-src")

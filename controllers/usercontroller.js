@@ -62,6 +62,7 @@ router.post('/login', async (req, res) => {
                 email: email
             }
         });
+        console.log(loginUser,"loginUser")
 
         if (loginUser) {
 
